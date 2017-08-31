@@ -19,6 +19,7 @@
 				<input type="text" class="form-control" placeholder="Teléfono" data-js="phone">
 			</p>
 			<button type="button" class="btn btn-primary" id="AddFill">Agregar</button>
+			<button type="button" class="btn btn-primary" id="saveEdit" style="display: none;">Editar</button>
 		</form>
 		<table class="table">
 			<thead>
@@ -40,57 +41,109 @@
 		
 	var list = [];
 	var sendButton = doc.getElementById('AddFill');
-	var contentHtml = doc.querySelector('[data-js="table-list"]');
-	var personName = doc.querySelector('[data-js="name"]').value;
+	var tableElement = doc.querySelector('[data-js="table-list"]');
+	var personName = doc.querySelector('[data-js="name"]');
+	var personLastname = doc.querySelector('[data-js="lastname"]');
+	var personPhone = doc.querySelector('[data-js="phone"]');
 
 
 	// evento click para agregar la data
 	sendButton.addEventListener( 'click', function () {
-        insertData();
+		validationForm();        
+        bindEvents();
     });
 
     function insertData() {
-    	debugger;
+
 	    var person = {
-			name : this.personName,
-			lastname: doc.querySelector('[data-js="lastname"]').value,
-			phone: doc.querySelector('[data-js="phone"]').value
+			name : personName.value,
+			lastname: personLastname.value,
+			phone: personPhone.value
 		}
 
 		// hacer push para agregar la data
 		list.push(person);
 		clearInput(person);
-		console.log(list);
-
-		contentHtml.innerHTML = '';
-		contentHtml.innerHTML = listIteration();
+		iterateList(person);
     }
 
-    function listIteration(){	
+    function iterateList(person){		
+		var row = doc.createElement('tr');
+		var col = doc.createElement('td');
+		var btnEdit = doc.createElement('button');
+		var btnDelete = doc.createElement('button');		
+		
+		btnEdit.setAttribute('class','btn-edit btn btn-secondary');
+		btnEdit.innerHTML = 'Editar';
+		btnDelete.setAttribute('class', 'btn-delete btn btn-danger');		
+		btnDelete.innerHTML = 'Borrar';
 
-		var contentHtml = '';
+		for (var i = 0; i < list.length; i++) {
+			btnEdit.setAttribute('id', 'btnEdit-'+[i]);
+			btnDelete.setAttribute('id', 'btnDelete-'+[i]);
+		}
 
-		// itero el array y le agrego el html 
-		list.forEach(function(person){
-			contentHtml += "<tr>";
-			contentHtml += "<td>" + person.name + "</td>"
-			contentHtml += "<td>" + person.lastname + "</td>"
-			contentHtml += "<td>" + person.phone + "</td>"
-			contentHtml += "<td><span class='btn-secondary'>" + "Editar" + "</span></td>"
-			contentHtml += "</tr>";
+		Object.keys(person).forEach(function(data) {
+			var col = doc.createElement('td');
+			col.innerHTML = person[data];
+			row.appendChild(col);
 		});
 
-		return contentHtml;
+		col.appendChild(btnEdit);
+		col.appendChild(btnDelete);
+		row.appendChild(col);
+
+		tableElement.appendChild(row);
 	}
 
 	function clearInput(person) {
-		doc.querySelector('[data-js="name"]').value = '';
-		doc.querySelector('[data-js="lastname"]').value = '';
-		doc.querySelector('[data-js="phone"]').value = '';
+		personName.value = '';
+		personLastname.value = '';
+		personPhone.value = '';
 	}
 
+	function bindEvents() {
+		doc.querySelector('.btn-edit').addEventListener( 'click', function () {
+			editRows();
+		});
+	}
+
+	function editRows(person) {
+
+		personName.focus();
+
+		// encontrar el index en el que estoy parado
+		// usar find para encontrar el index
+		// editar los campos
+		
+
+
+
+
+	}
+
+	function validationForm() {
+
+		if(personName.value === '') {
+
+			personName.placeholder = 'Debe completar el campo';
+			personName.focus();
+		} 
+
+		else if(personLastname.value === '') {
+			personLastname.placeholder = 'Debe completar el campo';
+			personLastname.focus();
+		}
+
+		else if(personPhone.value === '') {
+			personPhone.placeholder = 'Debe completar el campo';
+			personPhone.focus();
+		} else {
+			insertData();
+		}
+
+	}
 
 })(window, document);
-
 
 </script>
